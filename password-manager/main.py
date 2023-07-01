@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from random import randint, choice, shuffle
 import pyperclip
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
@@ -28,16 +29,30 @@ def save():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    new_data = {
+                website: {
+                        'email': email,
+                        'password': password
+                }
+    }
 
     if len(website) == 0 or len(password) == 0:
         messagebox.showinfo(title="Oops", message="Please make sure you have not left any field empty")
     else:
-        is_ok = messagebox.askokcancel(title="Entered Info", message=f"These are the details entered.\nEmail: {email}\nWebsite: {website}\n =Password: {password}\nIs it okay to save?")
-        if is_ok:
-            with open("data.txt", "a") as data_file:
-                data_file.write(f"{website} | {email} | {password}\n")
-                website_entry.delete(0, END)
-                password_entry.delete(0, END)
+        try:
+            with open("data.json", "r") as data_file:
+                data = json.load(data_file)
+        except:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            data.update(new_data)
+
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
+        finally:
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -70,6 +85,8 @@ password_entry.grid(column=1, row=3)
 generate_password_button = Button(text="Generate Password", command=generate_password)
 generate_password_button.grid(column=2, row=3)
 
+generate_password_button = Button(text="Generate Password", command=generate_password)
+generate_password_button.grid(column=2, row=3)
 add_button = Button(text="Add", width=32, command=save)
 add_button.grid(column=1, row=4, columnspan=2)
 
