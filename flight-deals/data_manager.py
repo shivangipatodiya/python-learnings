@@ -1,7 +1,9 @@
-from pprint import pprint
 import requests
+import os
+from dotenv import load_dotenv
 
-SHEETY_PRICES_ENDPOINT = "SHEETY ENDPOINT"
+load_dotenv()
+SHEETY_PRICES_ENDPOINT = os.getenv("SHEETY_PRICES_ENDPOINT")
 
 
 class DataManager:
